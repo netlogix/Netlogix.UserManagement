@@ -1,0 +1,11 @@
+.neos.neos-module table.neos-table tr.disabled td {
+	background-color: #2C2C2C;
+}
+
+.neos.neos-module table.neos-table tr.self td.neos-action a {
+	pointer-events: none;
+}
+
+.neos.neos-module table.neos-table tr.self td.neos-action a i {
+	color: #888;
+}

@@ -1,0 +1,11 @@
+privilegeTargets:
+  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+    'Netlogix.UserManagement:BackendModuleAccess':
+      matcher: 'within(Netlogix\UserManagement\Controller\UserManagementController) && method(public .*->(?!initialize).*Action())'
+
+roles:
+  'Neos.Neos:Administrator':
+    privileges:
+      -
+        privilegeTarget: 'Netlogix.UserManagement:BackendModuleAccess'
+        permission: GRANT

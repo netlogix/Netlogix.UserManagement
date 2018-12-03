@@ -1,0 +1,18 @@
+{
+    "description": "",
+    "type": "neos-package",
+    "name": "netlogix/usermanagement",
+    "require": {
+        "neos/neos": "^3.0 || ^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Netlogix\\UserManagement\\": "Classes/"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Netlogix.UserManagement"
+        }
+    }
+}

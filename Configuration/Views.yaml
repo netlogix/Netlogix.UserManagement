@@ -1,0 +1,5 @@
+-
+  requestFilter: 'mainRequest.isPackage("Neos.Neos") && isFormat("html") && isPackage("Netlogix.UserManagement") && isController("UserManagement")'
+  options:
+    'layoutRootPaths': ['resource://Neos.Neos/Private/Layouts']
+    'partialRootPaths': ['resource://Netlogix.UserManagement/Private/Partials', 'resource://Neos.Neos/Private/Partials']

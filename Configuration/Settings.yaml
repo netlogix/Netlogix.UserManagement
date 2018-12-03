@@ -1,0 +1,14 @@
+Neos:
+  Neos:
+    modules:
+      administration:
+        submodules:
+          nlxusermanagement:
+            label: 'nlx.UserManagement'
+            controller: Netlogix\UserManagement\Controller\UserManagementController
+            description: ''
+            icon: 'fa fa-users'
+            additionalResources:
+              styleSheets:
+                - 'resource://Netlogix.UserManagement/Public/Stylesheets/UserManagement.css'
+            privilegeTarget: 'Netlogix.UserManagement:BackendModuleAccess'
