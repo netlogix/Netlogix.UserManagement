@@ -73,10 +73,10 @@
 		</tbody>
 	</table>
 
-	<form>
+	<h3>Enable / Disable by Roles (excluding you)</h3>
+	<form onsubmit="return false;">
 		<div class="neos-control-group">
-			<label for="role">Role Identifier</label>
-			<input type="text" id="role" value="Neos.Neos:Editor">
+			<f:form.select id="role" options="{roles}" optionLabelField="name" optionValueField="identifier" value="Neos.Neos:Editor" />
 		</div>
 
 		<button class="neos-button neos-button-warning" onclick="sendRequest('deactivateUsersByRole', JSON.stringify({roleIdentifier: document.querySelector('#role').value}))">Deactivate</button>

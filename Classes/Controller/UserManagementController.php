@@ -7,6 +7,8 @@ use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Security\Context as SecurityContext;
+use Neos\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Security\Policy\Role;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Domain\Model\User;
@@ -50,25 +52,37 @@ class UserManagementController extends AbstractModuleController
 	protected $securityContext;
 
 	/**
-	 * @return void
+	 * @Flow\Inject
+	 * @var PolicyService
 	 */
-	public function indexAction()
+	protected $policyService;
+
+	public function indexAction(): void
 	{
 		$users = [];
 		foreach ($this->userRepository->findAll() as $user) {
 			$users[$this->persistenceManager->getIdentifierByObject($user)] = $user;
 		}
 
-		uasort($users, function(User $a, User $b) {
+		uasort($users, static function(User $a, User $b): int {
 			if ($a->isActive() !== $b->isActive()) {
 				return $b->isActive() <=> $a->isActive();
 			}
+			if ($a->getName()->getLastName() !== $b->getName()->getLastName()) {
+				return $a->getName()->getLastName() <=> $b->getName()->getLastName();
+			}
 
-			return $a->getName()->getFullName() <=> $b->getName()->getFullName();
+			return $a->getName()->getFirstName() <=> $b->getName()->getFirstName();
+		});
+
+		$roles = $this->policyService->getRoles();
+		usort($roles, static function(Role $a, Role $b): int {
+			return $a->getName() <=> $b->getName();
 		});
 
 		$this->view->assign('currentUser', $this->neosUserService->getCurrentUser());
 		$this->view->assign('users', $users);
+		$this->view->assign('roles', $roles);
 		$this->view->assign('csrfToken', $this->securityContext->getCsrfProtectionToken());
 
 		$uriBuilder = clone $this->uriBuilder;
