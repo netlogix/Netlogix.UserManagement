@@ -14,7 +14,7 @@
 				carry['moduleArguments[' + key + ']'] = arguments[key];
 				return carry;
 			}, {}));
-			const requestUri = uri + '?' + query;
+			const requestUri = uri + '&' + query;
 
 			fetch(requestUri, {
 				method: 'POST',
@@ -24,11 +24,12 @@
 				}
 			})
 				.then(() => location.reload())
-				.catch(response => displayErrorModal());
+				.catch(response => displayErrorModal(response));
 		}
 
-		function displayModal(title, content) {
+		function displayErrorModal(response) {
 			// TODO: display modal
+			console.error(response);
 		}
 	</script>
 
