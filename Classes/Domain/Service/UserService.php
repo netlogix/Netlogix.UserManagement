@@ -17,25 +17,32 @@ use Neos\Neos\Domain\Repository\UserRepository;
 class UserService
 {
 
-    private const INACTIVE_TIMESTAMP = '2000-01-01 00:00:00';
+    public const INACTIVE_TIMESTAMP = '2000-01-01 00:00:00';
 
     /**
-     * @Flow\Inject
-     * @var Context
-     */
-    protected $securityContext;
-
-    /**
-     * @Flow\Inject
      * @var UserRepository
      */
     protected $userRepository;
 
     /**
-     * @Flow\Inject
      * @var AccountRepository
      */
     protected $accountRepository;
+
+    /**
+     * @var Context
+     */
+    protected $securityContext;
+
+    public function __construct(
+        UserRepository $userRepository,
+        AccountRepository $accountRepository,
+        Context $securityContext
+    ) {
+        $this->userRepository = $userRepository;
+        $this->accountRepository = $accountRepository;
+        $this->securityContext = $securityContext;
+    }
 
     public function activateUser(User $user): void
     {
