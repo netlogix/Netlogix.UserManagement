@@ -1,10 +1,9 @@
 <?php
+declare(strict_types=1);
+
 namespace Netlogix\UserManagement\Controller;
 
-/*
- * This file is part of the Netlogix.UserManagement package.
- */
-
+use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Security\Context as SecurityContext;
@@ -13,6 +12,7 @@ use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\UserRepository;
 use Netlogix\UserManagement\Domain\Service\UserService;
+use Neos\Neos\Domain\Service\UserService as NeosUserService;
 
 class UserManagementController extends AbstractModuleController
 {
@@ -39,7 +39,7 @@ class UserManagementController extends AbstractModuleController
 
 	/**
 	 * @Flow\Inject
-	 * @var \Neos\Neos\Domain\Service\UserService
+	 * @var NeosUserService
 	 */
 	protected $neosUserService;
 
@@ -81,35 +81,31 @@ class UserManagementController extends AbstractModuleController
 		]);
 	}
 
-	/**
-	 * @param User $user
-	 */
-	public function activateUserAction(User $user)
+	public function activateUserAction(User $user): void
 	{
 		$this->userService->activateUser($user);
+
+		$this->addFlashMessage('User "%s" was activated!', '', Message::SEVERITY_OK, [$user->getLabel()]);
 	}
 
-	/**
-	 * @param User $user
-	 */
-	public function deactivateUserAction(User $user)
+	public function deactivateUserAction(User $user): void
 	{
 		$this->userService->deactivateUser($user);
+
+		$this->addFlashMessage('User "%s" was deactivated!', '', Message::SEVERITY_OK, [$user->getLabel()]);
 	}
 
-	/**
-	 * @param string $roleIdentifier
-	 */
-	public function activateUsersByRoleAction(string $roleIdentifier)
+	public function activateUsersByRoleAction(string $roleIdentifier): void
 	{
 		$this->userService->activateUsersByRole($roleIdentifier);
+
+		$this->addFlashMessage('Users with Role "%s" were activated!', '', Message::SEVERITY_OK, [$roleIdentifier]);
 	}
 
-	/**
-	 * @param string $roleIdentifier
-	 */
-	public function deactivateUsersByRoleAction(string $roleIdentifier)
+	public function deactivateUsersByRoleAction(string $roleIdentifier): void
 	{
 		$this->userService->deactivateUsersByRole($roleIdentifier);
+
+		$this->addFlashMessage('Users with Role "%s" were deactivated!', '', Message::SEVERITY_OK, [$roleIdentifier]);
 	}
 }

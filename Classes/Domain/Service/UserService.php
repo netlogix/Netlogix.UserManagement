@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Netlogix\UserManagement\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
@@ -15,7 +17,7 @@ use Neos\Neos\Domain\Repository\UserRepository;
 class UserService
 {
 
-	const INACTIVE_TIMESTAMP = '2000-01-01 00:00:00';
+	private const INACTIVE_TIMESTAMP = '2000-01-01 00:00:00';
 
 	/**
 	 * @Flow\Inject
@@ -35,43 +37,27 @@ class UserService
 	 */
 	protected $accountRepository;
 
-	/**
-	 * @param User $user
-	 */
-	public function activateUser(User $user)
+	public function activateUser(User $user): void
 	{
 		$this->setUserActive($user, true);
 	}
 
-	/**
-	 * @param User $user
-	 */
-	public function deactivateUser(User $user)
+	public function deactivateUser(User $user): void
 	{
 		$this->setUserActive($user, false);
 	}
 
-	/**
-	 * @param string $roleIdentifier
-	 */
-	public function activateUsersByRole(string $roleIdentifier)
+	public function activateUsersByRole(string $roleIdentifier): void
 	{
 		$this->setUserActiveByRole($roleIdentifier, true);
 	}
 
-	/**
-	 * @param string $roleIdentifier
-	 */
-	public function deactivateUsersByRole(string $roleIdentifier)
+	public function deactivateUsersByRole(string $roleIdentifier): void
 	{
 		$this->setUserActiveByRole($roleIdentifier, false);
 	}
 
-	/**
-	 * @param string $roleIdentifier
-	 * @param bool $active
-	 */
-	protected function setUserActiveByRole(string $roleIdentifier, $active)
+	protected function setUserActiveByRole(string $roleIdentifier, bool $active): void
 	{
 		/** @var User $user */
 		foreach ($this->userRepository->findAll() as $user) {
@@ -87,11 +73,7 @@ class UserService
 		}
 	}
 
-	/**
-	 * @param User $user
-	 * @param bool $active
-	 */
-	protected function setUserActive(User $user, $active)
+	protected function setUserActive(User $user, bool $active): void
 	{
 		foreach ($user->getAccounts() as $account) {
 			if ($this->securityContext->isInitialized() && $this->securityContext->getAccount() === $account) {
