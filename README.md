@@ -10,3 +10,4 @@ Currently the following Neos versions are supported:
 
 * `^4.0`
 * `^5.0`
+* `^7.0`
