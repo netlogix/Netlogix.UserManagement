@@ -3,83 +3,97 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="content">
-	<script type="text/javascript">
-		const uris = JSON.parse('{routes -> f:format.json() -> f:format.raw()}');
-		const csrfToken = '{csrfToken}';
+    <script type="text/javascript">
+        const uris = JSON.parse('{routes -> f:format.json() -> f:format.raw()}');
+        const csrfToken = '{csrfToken}';
 
-		function sendRequest(type, arguments) {
-			const uri = uris[type];
-			arguments = JSON.parse(arguments);
-			const query = $.param(Object.keys(arguments).reduce((carry, key) => {
-				carry['moduleArguments[' + key + ']'] = arguments[key];
-				return carry;
-			}, {}));
-			const requestUri = uri + '&' + query;
+        function sendRequest(type, arguments) {
+            const uri = uris[type];
+            arguments = JSON.parse(arguments);
+            const query = $.param(Object.keys(arguments).reduce((carry, key) => {
+                carry['moduleArguments[' + key + ']'] = arguments[key];
+                return carry;
+            }, {}));
+            const requestUri = uri + '&' + query;
 
-			fetch(requestUri, {
-				method: 'POST',
-				credentials: 'same-origin',
-				headers: {
-					'X-Flow-Csrftoken': csrfToken
-				}
-			})
-				.then(() => location.reload())
-				.catch(response => displayErrorModal(response));
-		}
+            fetch(requestUri, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-Flow-Csrftoken': csrfToken
+                }
+            })
+                .then(() => location.reload())
+                .catch(response => displayErrorModal(response));
+        }
 
-		function displayErrorModal(response) {
-			// TODO: display modal
-			console.error(response);
-		}
-	</script>
+        function displayErrorModal(response) {
+            // TODO: display modal
+            console.error(response);
+        }
+    </script>
 
-	<table class="neos-table">
-		<thead>
-			<tr>
-				<th><neos:backend.translate id="users.name" source="Modules" package="Neos.Neos"/></th>
-				<th><neos:backend.translate id="users.accountsAndRoles" source="Modules" package="Neos.Neos"/></th>
-				<th>&nbsp;</th>
-			</tr>
-		</thead>
-		<tbody>
-			<f:for each="{users}" key="identifier" as="user">
-				<tr class="{f:if(condition: user.active, else: 'disabled')} {f:if(condition: '{user} === {currentUser}', then: 'self')}">
-					<td>{user.name.fullName}</td>
-					<td>
-						<f:for each="{user.accounts}" as="account">
-							<i class="fas fa-user icon-white"></i>{account.accountIdentifier} <f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />
-						</f:for>
-					</td>
-					<td class="neos-action">
-						<div class="neos-pull-right">
-							<f:alias map="{params: {user: identifier}}">
-								<f:if condition="{user.active}">
-									<f:then>
-										<a href="javascript:sendRequest('deactivateUser', '{params -> f:format.json()}')" class="neos-button neos-button-primary" title="Deactivate User">
-											<i class="fas fa-ban icon-white"></i>
-										</a>
-									</f:then>
-									<f:else>
-										<a href="javascript:sendRequest('activateUser', '{params -> f:format.json()}')" class="neos-button neos-button-primary" title="Activate User">
-											<i class="fas fa-plus-circle icon-white"></i>
-										</a>
-									</f:else>
-								</f:if>
-							</f:alias>
-						</div>
-					</td>
-				</tr>
-			</f:for>
-		</tbody>
-	</table>
+    <table class="neos-table">
+        <thead>
+        <tr>
+            <th>
+                <neos:backend.translate id="users.name" source="Modules" package="Neos.Neos" />
+            </th>
+            <th>
+                <neos:backend.translate id="users.accountsAndRoles" source="Modules" package="Neos.Neos" />
+            </th>
+            <th>&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody>
+        <f:for each="{users}" key="identifier" as="user">
+            <tr class="{f:if(condition: user.active, else: 'disabled')} {f:if(condition: '{user} === {currentUser}', then: 'self')}">
+                <td>{user.name.fullName}</td>
+                <td>
+                    <f:for each="{user.accounts}" as="account">
+                        <i class="fas fa-user icon-white"></i>{account.accountIdentifier}
+                        <f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />
+                    </f:for>
+                </td>
+                <td class="neos-action">
+                    <div class="neos-pull-right">
+                        <f:alias map="{params: {user: identifier}}">
+                            <f:if condition="{user.active}">
+                                <f:then>
+                                    <a href="javascript:sendRequest('deactivateUser', '{params -> f:format.json()}')"
+                                       class="neos-button neos-button-primary" title="Deactivate User">
+                                        <i class="fas fa-ban icon-white"></i>
+                                    </a>
+                                </f:then>
+                                <f:else>
+                                    <a href="javascript:sendRequest('activateUser', '{params -> f:format.json()}')"
+                                       class="neos-button neos-button-primary" title="Activate User">
+                                        <i class="fas fa-plus-circle icon-white"></i>
+                                    </a>
+                                </f:else>
+                            </f:if>
+                        </f:alias>
+                    </div>
+                </td>
+            </tr>
+        </f:for>
+        </tbody>
+    </table>
 
-	<h3>Enable / Disable by Roles (excluding you)</h3>
-	<form onsubmit="return false;">
-		<div class="neos-control-group">
-			<f:form.select id="role" options="{roles}" optionLabelField="name" optionValueField="identifier" value="Neos.Neos:Editor" />
-		</div>
+    <h3>Enable / Disable by Roles (excluding you)</h3>
+    <form onsubmit="return false;">
+        <div class="neos-control-group">
+            <f:form.select id="role" options="{roles}" optionLabelField="name" optionValueField="identifier"
+                           value="Neos.Neos:Editor" />
+        </div>
 
-		<button class="neos-button neos-button-warning" onclick="sendRequest('deactivateUsersByRole', JSON.stringify({roleIdentifier: document.querySelector('#role').value}))">Deactivate</button>
-		<button class="neos-button neos-button-primary" onclick="sendRequest('activateUsersByRole', JSON.stringify({roleIdentifier: document.querySelector('#role').value}))">Activate</button>
-	</form>
+        <button class="neos-button neos-button-warning"
+                onclick="sendRequest('deactivateUsersByRole', JSON.stringify({roleIdentifier: document.querySelector('#role').value}))">
+            Deactivate
+        </button>
+        <button class="neos-button neos-button-primary"
+                onclick="sendRequest('activateUsersByRole', JSON.stringify({roleIdentifier: document.querySelector('#role').value}))">
+            Activate
+        </button>
+    </form>
 </f:section>
