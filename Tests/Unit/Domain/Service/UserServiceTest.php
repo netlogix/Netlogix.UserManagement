@@ -211,7 +211,7 @@ class UserServiceTest extends UnitTestCase
             ->userRepository
             ->expects(self::once())
             ->method('findAll')
-            ->willReturn([$user, $user]);
+            ->willReturn(new ArrayQueryResult([$user, $user]));
 
         $this
             ->accountRepository
@@ -262,7 +262,7 @@ class UserServiceTest extends UnitTestCase
             ->userRepository
             ->expects(self::once())
             ->method('findAll')
-            ->willReturn([$user, $user]);
+            ->willReturn(new ArrayQueryResult([$user, $user]));
 
         $this
             ->accountRepository
@@ -340,7 +340,7 @@ class UserServiceTest extends UnitTestCase
             ->userRepository
             ->expects(self::once())
             ->method('findAll')
-            ->willReturn([$userA, $userB]);
+            ->willReturn(new ArrayQueryResult([$userA, $userB]));
 
         $this->userService->{$method}('Netlogix.UserManagement:Foo');
     }
@@ -409,7 +409,7 @@ class UserServiceTest extends UnitTestCase
             ->userRepository
             ->expects(self::once())
             ->method('findAll')
-            ->willReturn([$userA, $userB]);
+            ->willReturn(new ArrayQueryResult([$userA, $userB]));
 
         $this
             ->securityContext
