@@ -1,9 +1,10 @@
 {
-    "description": "",
-    "type": "neos-package",
     "name": "netlogix/usermanagement",
+    "description": "Backend Module to enable/disable Neos Accounts",
+    "type": "neos-package",
     "require": {
-        "neos/neos": "^3.0 || ^4.0"
+        "php": "^7.2",
+        "neos/neos": "^4.0 || ^5.0 || ^7.0"
     },
     "autoload": {
         "psr-4": {

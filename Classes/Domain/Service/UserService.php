@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Netlogix\UserManagement\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
@@ -15,92 +17,80 @@ use Neos\Neos\Domain\Repository\UserRepository;
 class UserService
 {
 
-	const INACTIVE_TIMESTAMP = '2000-01-01 00:00:00';
+    public const INACTIVE_TIMESTAMP = '2000-01-01 00:00:00';
 
-	/**
-	 * @Flow\Inject
-	 * @var Context
-	 */
-	protected $securityContext;
+    /**
+     * @var UserRepository
+     */
+    protected $userRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var UserRepository
-	 */
-	protected $userRepository;
+    /**
+     * @var AccountRepository
+     */
+    protected $accountRepository;
 
-	/**
-	 * @Flow\Inject
-	 * @var AccountRepository
-	 */
-	protected $accountRepository;
+    /**
+     * @var Context
+     */
+    protected $securityContext;
 
-	/**
-	 * @param User $user
-	 */
-	public function activateUser(User $user)
-	{
-		$this->setUserActive($user, true);
-	}
+    public function __construct(
+        UserRepository $userRepository,
+        AccountRepository $accountRepository,
+        Context $securityContext
+    ) {
+        $this->userRepository = $userRepository;
+        $this->accountRepository = $accountRepository;
+        $this->securityContext = $securityContext;
+    }
 
-	/**
-	 * @param User $user
-	 */
-	public function deactivateUser(User $user)
-	{
-		$this->setUserActive($user, false);
-	}
+    public function activateUser(User $user): void
+    {
+        $this->setUserActive($user, true);
+    }
 
-	/**
-	 * @param string $roleIdentifier
-	 */
-	public function activateUsersByRole(string $roleIdentifier)
-	{
-		$this->setUserActiveByRole($roleIdentifier, true);
-	}
+    public function deactivateUser(User $user): void
+    {
+        $this->setUserActive($user, false);
+    }
 
-	/**
-	 * @param string $roleIdentifier
-	 */
-	public function deactivateUsersByRole(string $roleIdentifier)
-	{
-		$this->setUserActiveByRole($roleIdentifier, false);
-	}
+    public function activateUsersByRole(string $roleIdentifier): void
+    {
+        $this->setUserActiveByRole($roleIdentifier, true);
+    }
 
-	/**
-	 * @param string $roleIdentifier
-	 * @param bool $active
-	 */
-	protected function setUserActiveByRole(string $roleIdentifier, $active)
-	{
-		/** @var User $user */
-		foreach ($this->userRepository->findAll() as $user) {
-			$accountsWithRoles = array_filter($user->getAccounts()->toArray(), function(Account $account) use ($roleIdentifier) {
-				return in_array($roleIdentifier, array_map(function(Role $role) {
-					return $role->getIdentifier();
-				}, $account->getRoles()));
-			});
+    public function deactivateUsersByRole(string $roleIdentifier): void
+    {
+        $this->setUserActiveByRole($roleIdentifier, false);
+    }
 
-			if (!empty($accountsWithRoles)) {
-				$this->setUserActive($user, $active);
-			}
-		}
-	}
+    protected function setUserActiveByRole(string $roleIdentifier, bool $active): void
+    {
+        /** @var User $user */
+        foreach ($this->userRepository->findAll() as $user) {
+            $accountsWithRoles = array_filter($user->getAccounts()->toArray(),
+                function (Account $account) use ($roleIdentifier) {
+                    return in_array($roleIdentifier, array_map(function (Role $role) {
+                        return $role->getIdentifier();
+                    }, $account->getRoles()));
+                });
 
-	/**
-	 * @param User $user
-	 * @param bool $active
-	 */
-	protected function setUserActive(User $user, $active)
-	{
-		foreach ($user->getAccounts() as $account) {
-			if ($this->securityContext->isInitialized() && $this->securityContext->getAccount() === $account) {
-				continue;
-			}
+            if (!empty($accountsWithRoles)) {
+                $this->setUserActive($user, $active);
+            }
+        }
+    }
 
-			$account->setExpirationDate($active ? null : new \DateTime(self::INACTIVE_TIMESTAMP));
-			$this->accountRepository->update($account);
-		}
-	}
+    protected function setUserActive(User $user, bool $active): void
+    {
+        foreach ($user->getAccounts() as $account) {
+            if ($this->securityContext->isInitialized() && $this->securityContext->getAccount() === $account) {
+                continue;
+            }
+
+            $account->setExpirationDate($active ? null : new \DateTime(self::INACTIVE_TIMESTAMP));
+            $this->accountRepository->update($account);
+        }
+    }
 
 }

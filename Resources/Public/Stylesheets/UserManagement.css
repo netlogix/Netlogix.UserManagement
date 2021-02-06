@@ -9,3 +9,7 @@
 .neos.neos-module table.neos-table tr.self td.neos-action a i {
 	color: #888;
 }
+
+.neos.neos-module h3 {
+	margin-bottom: 1rem;
+}
