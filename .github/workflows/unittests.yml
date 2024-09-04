@@ -10,12 +10,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: [ 7.2, 7.3, 7.4 ]
-        neos-version: [ 4.3, 5.3, 7.0 ]
+        php-version: [ 7.4, 8.3 ]
+        neos-version: [ 7.3, 8.3 ]
         exclude:
-          # Disable Neos 7.0 on PHP 7.2, as 7.3 is required
-          - php-version: 7.2
-            neos-version: 7.0
+          - php-version: 7.4
+            neos-version: 8.3
 
     env:
       APP_ENV: true
@@ -29,16 +28,20 @@ jobs:
           extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite
           ini-values: opcache.fast_shutdown=0
 
-      - name: Cache composer dependencies
-        uses: actions/cache@v1
-        with:
-          path: ~/.composer/cache
-          key: php-${{ matrix.php-version }}-flow-${{ matrix.neos-version }}-composer-${{ hashFiles('composer.json') }}
-          restore-keys: |
-            php-${{ matrix.php-version }}-flow-${{ matrix.neos-version }}-composer-
-            php-${{ matrix.php-version }}-flow-
       - name: Install composer dependencies
-        run: composer create-project neos/neos-base-distribution ${{ env.NEOS_DIST_FOLDER }} --prefer-dist --no-progress "^${{ matrix.neos-version }}"
+        run: composer create-project neos/neos-base-distribution ${{ env.NEOS_DIST_FOLDER }} --prefer-dist --no-progress --no-install --no-scripts "^${{ matrix.neos-version }}"
+
+      - name: "Allow neos composer plugin"
+        run: composer config --no-plugins allow-plugins.neos/composer-plugin true
+        working-directory: ${{ env.NEOS_DIST_FOLDER }}
+
+      - name: "Require behat in compatible version"
+        run: composer require --dev --no-update "neos/behat:@dev"
+        working-directory: ${{ env.NEOS_DIST_FOLDER }}
+
+      - name: "Install project"
+        run: composer install
+        working-directory: ${{ env.NEOS_DIST_FOLDER }}
 
       - name: Checkout code
         uses: actions/checkout@v2
