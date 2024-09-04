@@ -29,7 +29,7 @@ jobs:
           ini-values: opcache.fast_shutdown=0
 
       - name: Install composer dependencies
-        run: composer create-project neos/neos-base-distribution ${{ env.NEOS_DIST_FOLDER }} --prefer-dist --no-progress --no-install "^${{ matrix.neos-version }}"
+        run: composer create-project neos/neos-base-distribution ${{ env.NEOS_DIST_FOLDER }} --prefer-dist --no-progress --no-install --no-scripts "^${{ matrix.neos-version }}"
 
       - name: "Allow neos composer plugin"
         run: composer config --no-plugins allow-plugins.neos/composer-plugin true
