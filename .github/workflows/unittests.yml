@@ -10,12 +10,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: [ 7.2, 7.3, 7.4 ]
-        neos-version: [ 4.3, 5.3, 7.0 ]
+        php-version: [ 7.4, 8.3 ]
+        neos-version: [ 7.3, 8.3 ]
         exclude:
-          # Disable Neos 7.0 on PHP 7.2, as 7.3 is required
-          - php-version: 7.2
-            neos-version: 7.0
+          - php-version: 7.4
+            neos-version: 8.3
 
     env:
       APP_ENV: true
